@@ -1,0 +1,953 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Household Items</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat+Brush&family=Nunito:wght@600;700;800&display=swap">
+<style>
+html{color-scheme:light}
+body{margin:0}
+[hidden]{display:none!important}
+img{max-width:100%}
+:root{
+  /* Layout: one hand-painted frame holding a 4x4 wall of watercolor items; the quiz and report sit on paper cards under the same washes. */
+  --paper:#f8f6f0;
+  --paper-2:#fffdf8;
+  --ink:#2b3648;
+  --ink-soft:#4f5d72;
+  --line:rgba(43,54,72,.16);
+  --blue:#5b9bd5;
+  --blue-d:#2f6fae;
+  --teal:#2a7f72;
+  --pink:#e7849f;
+  --sun:#f0b93b;
+  --red:#c2402f;
+  --ok:#2b8553;
+  --ok-bg:#d9f0e2;
+  --no-bg:#f9dcd8;
+  --display:'Caveat Brush','Segoe Print','Comic Sans MS',cursive;
+  --body:'Nunito','Segoe UI',system-ui,-apple-system,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+body{
+  font-family:var(--body);
+  color:var(--ink);
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .42 0 0 0 0 .4 0 0 0 0 .36 0 0 0 .11 0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E"),
+    radial-gradient(60% 38% at 6% 4%,rgba(91,155,213,.20),transparent 70%),
+    radial-gradient(48% 36% at 96% 10%,rgba(231,132,159,.17),transparent 70%),
+    radial-gradient(60% 46% at 84% 100%,rgba(240,185,59,.17),transparent 70%),
+    radial-gradient(46% 38% at 0% 92%,rgba(111,168,94,.15),transparent 70%),
+    var(--paper);
+  background-color:var(--paper);
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-block:20px 44px;
+  line-height:1.4;
+}
+button,select{font:inherit;color:inherit}
+.defs{position:absolute;width:0;height:0;overflow:hidden}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.wrap{max-width:1040px;margin:0 auto}
+
+/* header */
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:14px 24px;margin-bottom:22px}
+.brand{min-width:0}
+h1{font-family:var(--display);font-weight:400;font-size:clamp(2.3rem,7vw,3.5rem);line-height:1;margin:0;letter-spacing:.01em}
+.brand .stroke{display:block;width:min(260px,70%);height:14px;margin-top:2px;overflow:visible}
+.brand p{margin:6px 0 0;color:var(--ink-soft);font-weight:700}
+.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.tabs{display:flex;gap:6px;padding:4px;background:rgba(255,255,255,.6);border:1px solid var(--line);border-radius:18px 22px 18px 24px}
+.tab{border:2px solid transparent;background:transparent;padding:8px 20px;border-radius:14px 18px 14px 18px;font-weight:800;cursor:pointer;transition:background .15s,border-color .15s}
+.tab:hover{background:rgba(91,155,213,.14)}
+.tab[aria-selected="true"]{background:rgba(91,155,213,.26);border-color:var(--blue-d);color:#1d466f}
+.tab[aria-disabled="true"]{opacity:.5;cursor:not-allowed}
+.snd{display:inline-flex;align-items:center;gap:8px;border:2px solid var(--line);background:#fff;padding:8px 14px;border-radius:14px;font-weight:800;cursor:pointer}
+.snd svg{width:20px;height:20px}
+.snd[aria-pressed="false"]{color:var(--ink-soft);background:rgba(255,255,255,.5)}
+:focus-visible{outline:3px solid var(--blue-d);outline-offset:3px}
+
+/* learn: the house, framed like a painting */
+.frame{position:relative;padding:clamp(14px,2.6vw,26px);isolation:isolate}
+.frame::before{
+  content:"";position:absolute;inset:0;z-index:-1;
+  background:rgba(255,255,255,.55);
+  border:12px solid rgba(91,155,213,.72);
+  border-radius:20px 28px 18px 30px / 28px 18px 30px 20px;
+  box-shadow:inset 0 0 0 3px rgba(231,132,159,.5),inset 0 0 40px rgba(240,185,59,.12);
+  filter:url(#wcb);
+}
+.frame-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:6px 20px;margin-bottom:12px}
+.hint{margin:0;font-weight:700;color:var(--ink-soft);min-width:0}
+.count{margin:0;font-weight:800;font-variant-numeric:tabular-nums}
+.sceneWrap{overflow-x:auto;border-radius:14px}
+#scene{display:block;width:100%;min-width:760px;height:auto}
+.halo{fill:var(--c);opacity:0;transition:opacity .22s}
+.opt:hover .halo{opacity:.4}
+.item{cursor:pointer;outline:none}
+.item.on .halo{opacity:.5}
+.hit{fill:transparent;stroke:none}
+.item:focus-visible .hit{stroke:var(--blue-d);stroke-width:3;stroke-dasharray:7 5}
+.lbl-bg{fill:var(--paper-2);fill-opacity:.94;stroke:var(--line);stroke-width:1.2}
+.item.on .lbl-bg{stroke:var(--c);stroke-width:2.6}
+.lbl-en{font:800 13px var(--body);fill:var(--ink);text-anchor:middle}
+.lbl-id{font:700 11px var(--body);fill:#24527f;text-anchor:middle}
+.plaque{font:400 21px var(--display);fill:var(--ink);text-anchor:middle;letter-spacing:.02em}
+#zoom .item{pointer-events:none;animation:pop .16s ease-out both}
+.item.on{opacity:0}
+#zoom .item.on{opacity:1}
+@keyframes pop{from{transform:scale(1)}to{transform:scale(1.38)}}
+.now{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:4px 16px;margin-top:14px;min-height:54px;text-align:center}
+.now-en{font-family:var(--display);font-weight:400;font-size:clamp(1.8rem,5vw,2.5rem);line-height:1}
+.now-id{font-weight:800;color:#24527f;background:rgba(91,155,213,.16);padding:3px 14px;border-radius:999px}
+.now-id:empty{display:none}
+.now-room{font-weight:700;color:var(--ink-soft);font-size:.9rem}
+
+/* art */
+.i{fill:none;stroke:#2b3648;stroke-opacity:.5;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}
+.steam{fill:none;stroke:#8da2b5;stroke-opacity:.8;stroke-width:3;stroke-linecap:round}
+
+/* quiz */
+.panel{max-width:780px;margin:0 auto;background:var(--paper-2);border:1px solid var(--line);border-radius:22px 28px 20px 26px;padding:clamp(18px,4vw,34px);box-shadow:0 18px 32px -24px rgba(43,54,72,.55)}
+.panel h2{font-family:var(--display);font-weight:400;font-size:clamp(2rem,6vw,2.7rem);line-height:1.05;margin:0 0 6px;overflow-wrap:anywhere}
+.lead{margin:0 0 18px;color:var(--ink-soft);font-weight:700;font-size:1.05rem}
+.field{display:grid;gap:6px;margin-bottom:16px}
+.field label{font-weight:800}
+select{width:100%;max-width:440px;padding:12px 14px;border:2px solid var(--line);border-radius:12px;background:#fff;font-weight:700}
+.rules{margin:0 0 22px;padding-left:20px;display:grid;gap:4px;font-weight:600}
+.btn{border:2px solid transparent;padding:12px 24px;font-weight:800;font-size:1.05rem;border-radius:14px 18px 14px 20px;cursor:pointer;background:#fff;border-color:var(--line);transition:transform .15s,filter .15s}
+.btn:hover{transform:translateY(-1px);filter:brightness(1.04)}
+.btn.primary{background:var(--teal);color:#fff;border-color:#1f6359}
+.btn.ghost{background:transparent}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
+
+.hud{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px 16px;margin-bottom:10px}
+.who{font-weight:800;min-width:0;overflow-wrap:anywhere}
+.clock{font-family:var(--display);font-size:clamp(2.6rem,9vw,3.6rem);line-height:1;font-variant-numeric:tabular-nums;text-align:center}
+.clock.low{color:var(--red)}
+.tally{display:flex;gap:14px;justify-content:flex-end;font-weight:800;font-variant-numeric:tabular-nums;flex-wrap:wrap}
+.tally .ok{color:var(--ok)}
+.tally .no{color:var(--red)}
+.tally b{font-size:1.3rem}
+@media (max-width:560px){
+  .hud{grid-template-columns:1fr 1fr}
+  .clock{grid-column:1/-1;grid-row:1}
+}
+.bar{height:12px;border-radius:8px;background:rgba(43,54,72,.1);overflow:hidden;margin-bottom:18px}
+.bar i{display:block;height:100%;width:100%;transform-origin:left;background:linear-gradient(90deg,var(--teal),var(--sun));transition:transform .1s linear}
+.bar.low i{background:var(--red)}
+.stop{background:none;border:0;padding:4px 0;color:var(--ink-soft);font-weight:700;text-decoration:underline;cursor:pointer;margin-top:14px}
+.prompt{margin:0 0 6px;text-align:center;font-weight:800;font-size:1.15rem}
+.stage{min-height:176px;display:grid;place-items:center;gap:8px;text-align:center;margin-bottom:14px}
+.stage .art{width:min(58vw,168px);height:auto;aspect-ratio:1;overflow:visible}
+.stage .big{font-family:var(--display);font-size:clamp(3rem,12vw,4.4rem);line-height:1;margin:0;overflow-wrap:anywhere}
+.stage .tag{margin:0;color:var(--ink-soft);font-weight:700;font-size:.9rem}
+.opts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.opt{position:relative;min-height:66px;border:2px solid var(--line);background:#fff;border-radius:16px;font-weight:800;font-size:clamp(1.05rem,3.4vw,1.3rem);padding:10px 12px;cursor:pointer;transition:border-color .12s,background .12s,transform .12s}
+.opt:hover{border-color:var(--blue);transform:translateY(-2px)}
+.opt.pic{padding:6px;min-height:0}
+.opt.pic .art{width:100%;max-width:118px;height:auto;aspect-ratio:1;display:block;margin:0 auto;overflow:visible}
+.opt::after{content:attr(data-key);position:absolute;top:6px;left:10px;font-size:.74rem;color:var(--ink-soft);font-weight:700}
+@media (hover:none){.opt::after{display:none}}
+.opts.locked .opt{pointer-events:none}
+.opt.right{border-color:var(--ok);background:var(--ok-bg)}
+.opt.wrong{border-color:var(--red);background:var(--no-bg)}
+.replay{display:inline-flex;align-items:center;gap:8px;border:2px solid var(--line);background:#fff;padding:8px 14px;border-radius:12px;font-weight:800;cursor:pointer}
+.replay svg{width:20px;height:20px}
+
+/* report */
+.eyebrow{margin:0 0 4px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;font-size:.82rem;color:var(--ink-soft)}
+.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:18px 0 0}
+.stat{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px 16px;min-width:0}
+.stat dt{font-weight:800;font-size:.8rem;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-soft)}
+.stat dd{margin:2px 0 0;font-family:var(--display);font-size:2.6rem;line-height:1.1;font-variant-numeric:tabular-nums}
+.stat.score{grid-column:1/-1;background:rgba(240,185,59,.2);border-color:rgba(190,140,20,.45)}
+.stat.score dd{font-size:3.8rem}
+.stat.ok dd{color:var(--ok)}
+.stat.no dd{color:var(--red)}
+.note{margin:12px 0 0;color:var(--ink-soft);font-weight:600;font-size:.92rem}
+
+details.results{margin-top:26px;border-top:1px solid var(--line);padding-top:14px}
+details.results summary{cursor:pointer;font-weight:800}
+.tablewrap{overflow-x:auto;margin-top:12px}
+table{border-collapse:collapse;width:100%;min-width:520px;font-variant-numeric:tabular-nums}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
+th{font-size:.8rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft)}
+td.n,th.n{text-align:right}
+.res-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+.res-actions .btn{padding:8px 16px;font-size:.95rem}
+#copyBox{width:100%;margin-top:10px;min-height:110px;font:inherit;padding:8px;border:1px solid var(--line);border-radius:10px}
+
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+</head>
+<body>
+<svg class="defs" aria-hidden="true" focusable="false">
+  <defs>
+    <filter id="wc" x="-8%" y="-8%" width="116%" height="116%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.045" numOctaves="2" seed="4" result="warp"/>
+      <feDisplacementMap in="SourceGraphic" in2="warp" scale="4" xChannelSelector="R" yChannelSelector="G" result="wob"/>
+      <feTurbulence type="fractalNoise" baseFrequency="0.03 0.05" numOctaves="3" seed="11" result="blot"/>
+      <feColorMatrix in="blot" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1.1 0.35" result="blotA"/>
+      <feComposite in="wob" in2="blotA" operator="in" result="mott"/>
+      <feMorphology in="wob" operator="erode" radius="1.4" result="er"/>
+      <feComposite in="wob" in2="er" operator="out" result="rim"/>
+      <feBlend in="rim" in2="mott" mode="multiply" result="out"/>
+      <feGaussianBlur in="out" stdDeviation="0.35"/>
+    </filter>
+    <filter id="wcb" x="-3%" y="-3%" width="106%" height="106%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="3" seed="7" result="w"/>
+      <feDisplacementMap in="SourceGraphic" in2="w" scale="9" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+  </defs>
+</svg>
+<div id="sr" class="sr" aria-live="polite"></div>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <h1>Household Items</h1>
+      <svg class="stroke" viewBox="0 0 220 14" aria-hidden="true"><path d="M4 8Q40 2 80 8T160 7T216 6" stroke="#f0b93b" stroke-opacity=".85" stroke-width="7" fill="none" stroke-linecap="round" filter="url(#wc)"/></svg>
+      <p>English practice for Grade 4</p>
+    </div>
+    <div class="controls">
+      <div class="tabs" role="tablist" aria-label="Mode">
+        <button class="tab" role="tab" id="tab-learn" aria-selected="true" aria-controls="learn">Learn</button>
+        <button class="tab" role="tab" id="tab-quiz" aria-selected="false" aria-controls="quiz">Quiz</button>
+      </div>
+      <button class="snd" id="sound" type="button" aria-pressed="true"></button>
+    </div>
+  </header>
+
+  <main>
+    <section id="learn" role="tabpanel" aria-labelledby="tab-learn">
+      <div class="frame">
+        <div class="frame-head">
+          <p class="hint" id="hint"></p>
+          <p class="count">Heard <span id="heard">0</span> of 16 words</p>
+        </div>
+        <div class="sceneWrap">
+          <svg id="scene" viewBox="0 0 1000 700" role="group" aria-label="A house with a bathroom on the left and a kitchen on the right">
+            <defs>
+              <pattern id="tiles" width="36" height="36" patternUnits="userSpaceOnUse"><path d="M36 0H0V36" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="2"/></pattern>
+              <pattern id="planks" width="64" height="25" patternUnits="userSpaceOnUse"><path d="M0 24.5H64M32 0V25" fill="none" stroke="#8a5a2b" stroke-opacity=".4" stroke-width="1.6"/></pattern>
+              <pattern id="stripes" width="34" height="34" patternUnits="userSpaceOnUse"><path d="M17 0V34" stroke="#fff" stroke-opacity=".38" stroke-width="9"/></pattern>
+            </defs>
+
+            <g pointer-events="none">
+              <!-- ground, sun, clouds -->
+              <g filter="url(#wcb)">
+                <rect x="0" y="648" width="1000" height="52" fill="#9ccb86" fill-opacity=".62"/>
+                <ellipse cx="500" cy="652" rx="500" ry="15" fill="#7fb36b" fill-opacity=".45"/>
+                <circle cx="86" cy="62" r="40" fill="#f0b93b" fill-opacity=".24"/>
+                <circle cx="86" cy="62" r="29" fill="#f0b93b" fill-opacity=".85"/>
+                <g fill="#fff" fill-opacity=".92" stroke="#5b9bd5" stroke-opacity=".35" stroke-width="2">
+                  <ellipse cx="905" cy="64" rx="44" ry="17"/><ellipse cx="936" cy="50" rx="28" ry="15"/><ellipse cx="880" cy="52" rx="26" ry="14"/>
+                </g>
+              </g>
+
+              <!-- chimney + roof -->
+              <g filter="url(#wcb)">
+                <rect x="770" y="58" width="46" height="84" fill="#b98b62" fill-opacity=".88"/>
+                <rect x="764" y="52" width="58" height="12" rx="3" fill="#8e6a48" fill-opacity=".85"/>
+                <circle cx="800" cy="34" r="12" fill="#fff" fill-opacity=".75"/><circle cx="818" cy="18" r="9" fill="#fff" fill-opacity=".6"/>
+                <polygon points="8,152 500,24 992,152" fill="#d8574a" fill-opacity=".84"/>
+                <polygon points="66,148 500,36 934,148" fill="#f0a08a" fill-opacity=".32"/>
+                <path d="M100 128H900M177 108H823M254 88H746" stroke="#8f2f23" stroke-opacity=".28" stroke-width="3" fill="none" stroke-linecap="round"/>
+                <circle cx="500" cy="100" r="21" fill="#cfe8f7" fill-opacity=".92" stroke="#b98b62" stroke-width="5"/>
+                <path d="M500 80V120M480 100H520" stroke="#b98b62" stroke-width="3"/>
+              </g>
+
+              <!-- walls, floors -->
+              <g filter="url(#wcb)">
+                <rect x="38" y="150" width="924" height="500" fill="#e6cf9f" fill-opacity=".9"/>
+                <rect x="50" y="160" width="440" height="440" fill="#bfe0ee" fill-opacity=".85"/>
+                <rect x="50" y="160" width="440" height="220" fill="#8ec0ec" fill-opacity=".22"/>
+                <rect x="50" y="160" width="440" height="440" fill="url(#tiles)"/>
+                <rect x="510" y="160" width="440" height="440" fill="#f7de9f" fill-opacity=".88"/>
+                <rect x="510" y="160" width="440" height="220" fill="#f0b93b" fill-opacity=".14"/>
+                <rect x="510" y="160" width="440" height="440" fill="url(#stripes)"/>
+                <rect x="490" y="150" width="20" height="450" fill="#cdb48d" fill-opacity=".95"/>
+                <rect x="50" y="600" width="440" height="50" fill="#86bfc4" fill-opacity=".88"/>
+                <rect x="50" y="600" width="440" height="50" fill="url(#tiles)"/>
+                <rect x="510" y="600" width="440" height="50" fill="#d6a066" fill-opacity=".92"/>
+                <rect x="510" y="600" width="440" height="50" fill="url(#planks)"/>
+                <path d="M50 599H490M510 599H950" stroke="#7a5a3a" stroke-opacity=".45" stroke-width="3"/>
+              </g>
+
+              <!-- room signs -->
+              <rect x="130" y="168" width="280" height="36" rx="12" fill="#fff" fill-opacity=".85" stroke="#2b3648" stroke-opacity=".18" stroke-width="1.5"/>
+              <text class="plaque" x="270" y="193">Bathroom · Kamar mandi</text>
+              <rect x="610" y="168" width="240" height="36" rx="12" fill="#fff" fill-opacity=".85" stroke="#2b3648" stroke-opacity=".18" stroke-width="1.5"/>
+              <text class="plaque" x="730" y="193">Kitchen · Dapur</text>
+
+              <!-- windows -->
+              <g filter="url(#wcb)">
+                <rect x="62" y="372" width="108" height="92" fill="#e5f3fb" stroke="#b98b62" stroke-width="6"/>
+                <path d="M116 372V464M62 418H170" stroke="#b98b62" stroke-width="4"/>
+                <path d="M70 380Q100 392 120 380V440Q96 430 70 440Z" fill="#fff" fill-opacity=".55"/>
+                <rect x="805" y="335" width="125" height="80" fill="#cfe8f7" fill-opacity=".92" stroke="#b98b62" stroke-width="6"/>
+                <path d="M867 335V415M805 375H930" stroke="#b98b62" stroke-width="4"/>
+                <rect x="808" y="338" width="20" height="74" fill="#e7849f" fill-opacity=".7"/>
+                <rect x="907" y="338" width="20" height="74" fill="#e7849f" fill-opacity=".7"/>
+              </g>
+
+              <!-- shelves, rail, counter -->
+              <g filter="url(#wcb)">
+                <rect x="190" y="300" width="290" height="10" rx="3" fill="#b98b62"/>
+                <rect x="190" y="420" width="290" height="10" rx="3" fill="#b98b62"/>
+                <path d="M200 310V328L222 310ZM468 310V328L446 310ZM200 430V448L222 430ZM468 430V448L446 430Z" fill="#9d7650"/>
+                <rect x="540" y="420" width="230" height="10" rx="3" fill="#b98b62"/>
+                <path d="M550 430V448L572 430ZM758 430V448L736 430Z" fill="#9d7650"/>
+                <rect x="535" y="208" width="405" height="6" rx="3" fill="#7f8c9b"/>
+                <circle cx="535" cy="211" r="6" fill="#5f6d7e"/><circle cx="940" cy="211" r="6" fill="#5f6d7e"/>
+                <path d="M860 214V250" stroke="#7f8c9b" stroke-width="3" stroke-linecap="round"/>
+                <rect x="765" y="502" width="185" height="98" fill="#6fa8a0" fill-opacity=".9"/>
+                <path d="M857 510V596" stroke="#2b3648" stroke-opacity=".25" stroke-width="3"/>
+                <circle cx="846" cy="552" r="4" fill="#e6d8b8"/><circle cx="868" cy="552" r="4" fill="#e6d8b8"/>
+                <rect x="760" y="492" width="195" height="12" rx="4" fill="#e6d8b8"/>
+              </g>
+            </g>
+
+            <g id="items"></g>
+            <g id="zoom"></g>
+          </svg>
+        </div>
+        <div class="now" id="now">
+          <span class="now-en" id="nowEn">Hover over an item</span>
+          <span class="now-id" id="nowId"></span>
+          <span class="now-room" id="nowRoom"></span>
+        </div>
+      </div>
+    </section>
+
+    <section id="quiz" role="tabpanel" aria-labelledby="tab-quiz" hidden>
+      <div class="panel" id="q-start">
+        <h2>Quiz time</h2>
+        <p class="lead">Answer as many questions as you can in 1:30.</p>
+        <div class="field">
+          <label for="student">Student name</label>
+          <select id="student"></select>
+        </div>
+        <ul class="rules">
+          <li>You have 1 minute 30 seconds. The clock starts when you press Start.</li>
+          <li>Each correct answer gives 10 points. Each wrong answer takes away 2 points.</li>
+          <li>Tap an answer, or press 1, 2, 3 or 4 on the keyboard.</li>
+        </ul>
+        <button class="btn primary" id="start" type="button">Start quiz</button>
+
+        <details class="results" id="resultsBox">
+          <summary id="resultsSummary">Class results on this device</summary>
+          <div class="tablewrap">
+            <table>
+              <thead><tr><th>Student</th><th class="n">Correct</th><th class="n">Incorrect</th><th class="n">Accuracy</th><th class="n">Score</th></tr></thead>
+              <tbody id="resultsBody"></tbody>
+            </table>
+          </div>
+          <p class="note">Shows each student's best try. Results stay in this browser only.</p>
+          <div class="res-actions">
+            <button class="btn" id="copyRes" type="button">Copy results</button>
+            <button class="btn ghost" id="clearRes" type="button">Clear results</button>
+          </div>
+          <textarea id="copyBox" hidden readonly aria-label="Results to copy"></textarea>
+        </details>
+      </div>
+
+      <div class="panel" id="q-play" hidden>
+        <div class="hud">
+          <div class="who" id="who"></div>
+          <div class="clock" id="clock" aria-hidden="true">1:30</div>
+          <div class="tally"><span class="ok"><b id="nOk">0</b> correct</span><span class="no"><b id="nNo">0</b> wrong</span></div>
+        </div>
+        <div class="bar" id="bar"><i id="barFill"></i></div>
+        <p class="prompt" id="prompt"></p>
+        <div class="stage" id="stage"></div>
+        <div class="opts" id="opts"></div>
+        <button class="stop" id="stop" type="button">Stop quiz</button>
+      </div>
+
+      <div class="panel" id="q-report" hidden>
+        <p class="eyebrow">Time is up</p>
+        <h2 id="rName"></h2>
+        <p class="lead" id="rMsg"></p>
+        <dl class="stats">
+          <div class="stat ok"><dt>Correct answers</dt><dd id="rOk">0</dd></div>
+          <div class="stat no"><dt>Incorrect answers</dt><dd id="rNo">0</dd></div>
+          <div class="stat"><dt>Accuracy</dt><dd id="rAcc">0%</dd></div>
+          <div class="stat"><dt>Questions answered</dt><dd id="rTot">0</dd></div>
+          <div class="stat score"><dt>Final score</dt><dd id="rScore">0</dd></div>
+        </dl>
+        <p class="note">Score = 10 points for each correct answer, minus 2 points for each wrong answer.</p>
+        <div class="actions">
+          <button class="btn primary" id="again" type="button">Play again</button>
+          <button class="btn" id="next" type="button">Next student</button>
+          <button class="btn ghost" id="toLearn" type="button">Back to Learn</button>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+var QUIZ_SECONDS = 90, PTS_OK = 10, PTS_NO = 2;
+
+var STUDENTS = [
+ 'ABIDZAR AL-GHAZALI','AHMAD AZMI FADILLAH','AHMAD RAJIB HIDAYAT','ALEXIA SANDRANOVA AZZAHRA','AMIRA NADHIFA AZKIYA',
+ 'AMRAN AL GOZALI','ANINDITA AULIA AZAHRA','ANSOSIKA RIZQULLAH ALVI','AQIL AKHDAN','ARIF FATHAN NUR ROHMAN',
+ 'ARKAN SAID RAMADANI','AULIA JASMINE OKTAVIANA','GABRIEL YOSAFAT SITINJAK','GADIS ADIBA RACHMAN','GADIS SHANUM ALMAHYRA',
+ 'HABSYI WIJAYANTO','KIMBERLY AMANDA SIHALOHO','KIREY AZKADINDA','MARCEL VALEN','MIKA HILMI JASIR',
+ 'MUHAMAD ABIDZAR RAMADHAN','MUHAMMAD ALWI NASHIR','NAYLA AISYAH FEBRINA','NAZWA AULIA FITRI','NEISHA HAWA FATHIYYATURRAHMAH',
+ 'RASYA MUHAMMAD ATHAYA','SAFA ALIFA RAMADHANI','SYAKILA HUMAIRA','VARZHA AZKA ANNAFIS'
+];
+
+var ROOM = {
+  bath:{name:'Bathroom', id:'Kamar mandi', c:'#5b9bd5'},
+  kitchen:{name:'Kitchen', id:'Dapur', c:'#f0b93b'}
+};
+
+var ITEMS = [
+ {k:'towel',      en:'Towel',      id:'Handuk',     say:'towel',      room:'bath',    c:'#3fa796'},
+ {k:'shampoo',    en:'Shampoo',    id:'Sampo',      say:'shampoo',    room:'bath',    c:'#8a6fc2'},
+ {k:'toothbrush', en:'Toothbrush', id:'Sikat gigi', say:'toothbrush', room:'bath',    c:'#5b9bd5'},
+ {k:'toothpaste', en:'Toothpaste', id:'Pasta gigi', say:'toothpaste', room:'bath',    c:'#d8574a'},
+ {k:'dipper',     en:'Dipper',     id:'Gayung',     say:'dipper',     room:'bath',    c:'#4a8fd0'},
+ {k:'soap',       en:'Soap',       id:'Sabun',      say:'soap',       room:'bath',    c:'#e0a722'},
+ {k:'bathtub',    en:'Bathtub',    id:'Bak mandi',  say:'bathtub',    room:'bath',    c:'#4f9fc9'},
+ {k:'spoon',      en:'Spoon',      id:'Sendok',     say:'spoon',      room:'kitchen', c:'#7f9bb8'},
+ {k:'fork',       en:'Fork',       id:'Garpu',      say:'fork',       room:'kitchen', c:'#7f9bb8'},
+ {k:'pan',        en:'Pan',        id:'Wajan',      say:'pan',        room:'kitchen', c:'#5f6d7e'},
+ {k:'knife',      en:'Knife',      id:'Pisau',      say:'knife',      room:'kitchen', c:'#b98b62'},
+ {k:'glass',      en:'Glass',      id:'Gelas',      say:'glass',      room:'kitchen', c:'#5b9bd5'},
+ {k:'stove',      en:'Stove',      id:'Kompor',     say:'stove',      room:'kitchen', c:'#ee9b5a'},
+ {k:'plate',      en:'Plate',      id:'Piring',     say:'plate',      room:'kitchen', c:'#5b9bd5'},
+ {k:'bowl',       en:'Bowl',       id:'Mangkuk',    say:'bowl',       room:'kitchen', c:'#ee9b5a'},
+ {k:'pot',        en:'Pot',        id:'Panci',      say:'pot',        room:'kitchen', c:'#d8574a'}
+];
+
+/* ---------- watercolor artwork (120 x 120 each) ---------- */
+var FLAME = '<path d="M42 40Q34 30 41 18Q43 26 49 25Q53 33 46 40Z" fill="#ee9b5a"/><path d="M42 39Q38 33 42 27Q46 32 44 39Z" fill="#f0d045"/>';
+var ART = {
+towel:
+ '<rect x="20" y="14" width="80" height="7" rx="3.5" fill="#b98b62"/>'+
+ '<path d="M32 22H88V94Q60 103 32 94Z" fill="#3fa796" fill-opacity=".88"/>'+
+ '<path d="M32 66H88V77H32Z" fill="#f0b93b" fill-opacity=".92"/>'+
+ '<path d="M32 81H88V85H32Z" fill="#f0b93b" fill-opacity=".65"/>'+
+ '<path d="M32 22H45V96Q38 96 32 94Z" fill="#fff" fill-opacity=".22"/>'+
+ '<path class="i" d="M32 22H88V94Q60 103 32 94Z"/>'+
+ '<path class="i" d="M38 98V106M47 100V108M56 101V109M65 101V109M74 100V108M83 98V106"/>',
+shampoo:
+ '<rect x="50" y="17" width="20" height="13" rx="3" fill="#6f58b0"/>'+
+ '<path d="M70 21H84V26H70Z" fill="#6f58b0"/>'+
+ '<rect x="52" y="30" width="16" height="13" rx="3" fill="#8a6fc2"/>'+
+ '<rect x="38" y="42" width="44" height="62" rx="12" fill="#a58ad1" fill-opacity=".88"/>'+
+ '<rect x="45" y="62" width="30" height="28" rx="6" fill="#fff" fill-opacity=".88"/>'+
+ '<path d="M60 67Q53 77 60 84Q67 77 60 67Z" fill="#5b9bd5" fill-opacity=".9"/>'+
+ '<rect x="43" y="48" width="5" height="46" rx="2.5" fill="#fff" fill-opacity=".3"/>'+
+ '<rect class="i" x="38" y="42" width="44" height="62" rx="12"/><rect class="i" x="50" y="17" width="20" height="13" rx="3"/>',
+toothbrush:
+ '<g transform="rotate(-38 60 60)">'+
+ '<rect x="12" y="53" width="72" height="14" rx="7" fill="#5b9bd5" fill-opacity=".9"/>'+
+ '<rect x="24" y="57" width="28" height="6" rx="3" fill="#fff" fill-opacity=".4"/>'+
+ '<rect x="80" y="52" width="26" height="16" rx="5" fill="#2f6fae" fill-opacity=".75"/>'+
+ '<rect x="84" y="38" width="6" height="15" rx="2" fill="#7fd0c2"/><rect x="91" y="38" width="6" height="15" rx="2" fill="#f2a5bb"/><rect x="98" y="38" width="6" height="15" rx="2" fill="#7fd0c2"/>'+
+ '<rect class="i" x="12" y="53" width="72" height="14" rx="7"/><rect class="i" x="80" y="52" width="26" height="16" rx="5"/></g>',
+toothpaste:
+ '<g transform="rotate(-24 60 60)">'+
+ '<path d="M22 46L84 40Q90 40 90 46V74Q90 80 84 80L22 74Z" fill="#dcecf8" fill-opacity=".95"/>'+
+ '<path d="M42 44L58 42.5V78L42 76.5Z" fill="#d8574a" fill-opacity=".85"/>'+
+ '<path d="M62 42L78 40.4V79.6L62 78Z" fill="#3fa796" fill-opacity=".85"/>'+
+ '<rect x="10" y="47" width="14" height="26" rx="2" fill="#a9b6c4"/>'+
+ '<rect x="90" y="51" width="17" height="18" rx="4" fill="#2f6fae"/>'+
+ '<path class="i" d="M22 46L84 40Q90 40 90 46V74Q90 80 84 80L22 74Z"/><path class="i" d="M13 49V71M17 49V71M21 49V71"/><rect class="i" x="90" y="51" width="17" height="18" rx="4"/></g>',
+dipper:
+ '<path d="M78 56L100 24Q103 20 108 23Q112 27 109 31L88 64Z" fill="#2f6fae" fill-opacity=".92"/>'+
+ '<path d="M22 54H80Q80 94 51 94Q22 94 22 54Z" fill="#4a8fd0" fill-opacity=".88"/>'+
+ '<ellipse cx="51" cy="54" rx="29" ry="7" fill="#8ec0ec"/>'+
+ '<ellipse cx="51" cy="55" rx="23" ry="4.5" fill="#2f6fae" fill-opacity=".5"/>'+
+ '<path d="M30 64Q32 80 44 87" stroke="#fff" stroke-opacity=".5" stroke-width="4" fill="none" stroke-linecap="round"/>'+
+ '<path d="M26 28Q21 36 26 40Q31 36 26 28Z" fill="#8ec0ec"/><path d="M42 16Q38 22 42 25Q46 22 42 16Z" fill="#8ec0ec"/>'+
+ '<path class="i" d="M22 54H80Q80 94 51 94Q22 94 22 54Z"/><ellipse class="i" cx="51" cy="54" rx="29" ry="7"/>',
+soap:
+ '<g transform="rotate(-8 60 76)">'+
+ '<rect x="20" y="56" width="78" height="40" rx="16" fill="#f0b93b" fill-opacity=".9"/>'+
+ '<rect x="30" y="64" width="58" height="24" rx="10" fill="#fff3c4" fill-opacity=".8"/>'+
+ '<path class="i" d="M42 76H76"/><rect class="i" x="20" y="56" width="78" height="40" rx="16"/></g>'+
+ '<circle cx="86" cy="34" r="13" fill="#cfe8f7" fill-opacity=".7"/><circle cx="104" cy="50" r="6" fill="#cfe8f7" fill-opacity=".7"/><circle cx="66" cy="26" r="7" fill="#cfe8f7" fill-opacity=".7"/>'+
+ '<circle class="i" cx="86" cy="34" r="13"/><circle class="i" cx="104" cy="50" r="6"/><circle class="i" cx="66" cy="26" r="7"/>'+
+ '<path d="M80 28Q82 25 86 25" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round"/>',
+bathtub:
+ '<path d="M96 56V32Q96 24 88 24H78" fill="none" stroke="#a9b6c4" stroke-width="7" stroke-linecap="round"/>'+
+ '<path d="M78 31Q75 37 78 40Q81 37 78 31Z" fill="#8ec0ec"/>'+
+ '<ellipse cx="34" cy="104" rx="8" ry="4" fill="#b98b62"/><ellipse cx="86" cy="104" rx="8" ry="4" fill="#b98b62"/>'+
+ '<path d="M12 62H108Q108 96 84 98H36Q12 96 12 62Z" fill="#7fb6d9" fill-opacity=".9"/>'+
+ '<path d="M22 70Q24 86 36 92" stroke="#fff" stroke-opacity=".45" stroke-width="4" fill="none" stroke-linecap="round"/>'+
+ '<rect x="8" y="55" width="104" height="10" rx="5" fill="#dbeaf5"/>'+
+ '<circle cx="42" cy="50" r="8" fill="#f6d4e0" fill-opacity=".95"/><circle cx="54" cy="45" r="11" fill="#f6d4e0" fill-opacity=".95"/><circle cx="68" cy="47" r="10" fill="#f6d4e0" fill-opacity=".95"/><circle cx="80" cy="51" r="8" fill="#f6d4e0" fill-opacity=".95"/>'+
+ '<path class="i" d="M12 62Q12 96 36 98H84Q108 96 108 62"/><rect class="i" x="8" y="55" width="104" height="10" rx="5"/>'+
+ '<circle class="i" cx="54" cy="45" r="11"/><circle class="i" cx="68" cy="47" r="10"/>',
+spoon:
+ '<g transform="rotate(28 60 60)">'+
+ '<path d="M55 50Q53 80 55 106Q60 111 65 106Q67 80 65 50Z" fill="#9fb4c9"/>'+
+ '<ellipse cx="60" cy="30" rx="17" ry="22" fill="#9fb4c9"/>'+
+ '<ellipse cx="60" cy="31" rx="11" ry="16" fill="#dbe5ee" fill-opacity=".95"/>'+
+ '<path d="M58 58Q57 80 58 100" stroke="#fff" stroke-opacity=".55" stroke-width="3" fill="none" stroke-linecap="round"/>'+
+ '<ellipse class="i" cx="60" cy="30" rx="17" ry="22"/><path class="i" d="M55 50Q53 80 55 106Q60 111 65 106Q67 80 65 50"/></g>',
+fork:
+ '<g transform="rotate(-28 60 60)">'+
+ '<path d="M43 38H75V46Q75 62 65 64H53Q43 62 43 46Z" fill="#9fb4c9"/>'+
+ '<rect x="43" y="10" width="5" height="32" rx="2.5" fill="#9fb4c9"/><rect x="52" y="10" width="5" height="32" rx="2.5" fill="#9fb4c9"/><rect x="61" y="10" width="5" height="32" rx="2.5" fill="#9fb4c9"/><rect x="70" y="10" width="5" height="32" rx="2.5" fill="#9fb4c9"/>'+
+ '<path d="M53 62H65L64 106Q59 111 54 106Z" fill="#9fb4c9"/>'+
+ '<path d="M59 70V100" stroke="#fff" stroke-opacity=".55" stroke-width="3" fill="none" stroke-linecap="round"/>'+
+ '<path class="i" d="M43 12V46Q43 62 53 64L54 106Q59 111 64 106L65 64Q75 62 75 46V12M52 12V38M61 12V38M70 12V38"/></g>',
+pan:
+ '<path d="M84 58L112 52Q116 52 116 57V62Q116 66 112 66L84 72Z" fill="#b98b62"/><circle cx="109" cy="59" r="2.4" fill="#f8f6f0"/>'+
+ '<ellipse cx="50" cy="64" rx="38" ry="26" fill="#5f6d7e" fill-opacity=".94"/>'+
+ '<ellipse cx="50" cy="62" rx="31" ry="20" fill="#3f4b5a" fill-opacity=".94"/>'+
+ '<path d="M30 60Q28 48 44 48Q58 44 66 54Q74 62 62 70Q48 76 36 70Q28 68 30 60Z" fill="#fff" fill-opacity=".96"/>'+
+ '<circle cx="50" cy="60" r="8.5" fill="#f0b93b"/><circle cx="47" cy="57" r="2.4" fill="#fff" fill-opacity=".6"/>'+
+ '<path d="M16 58Q22 44 40 39" stroke="#fff" stroke-opacity=".3" stroke-width="3" fill="none" stroke-linecap="round"/>'+
+ '<ellipse class="i" cx="50" cy="64" rx="38" ry="26"/>',
+knife:
+ '<g transform="rotate(22 60 60)">'+
+ '<path d="M55 8Q80 28 74 68H55Z" fill="#aebccb" fill-opacity=".95"/>'+
+ '<path d="M59 24Q70 38 68 62" stroke="#fff" stroke-opacity=".55" stroke-width="3" fill="none" stroke-linecap="round"/>'+
+ '<rect x="54" y="65" width="21" height="5" rx="2" fill="#7f8c9b"/>'+
+ '<rect x="55" y="68" width="19" height="40" rx="7" fill="#b98b62"/>'+
+ '<circle cx="64.5" cy="80" r="2.3" fill="#3b4252" fill-opacity=".6"/><circle cx="64.5" cy="96" r="2.3" fill="#3b4252" fill-opacity=".6"/>'+
+ '<path class="i" d="M55 8Q80 28 74 68H55Z"/><rect class="i" x="55" y="68" width="19" height="40" rx="7"/></g>',
+glass:
+ '<path d="M34 24H86L80 100Q60 108 40 100Z" fill="#cfe8f7" fill-opacity=".7"/>'+
+ '<path d="M36 48Q48 52 60 48Q72 44 84 48L80 99Q60 106 40 99Z" fill="#5b9bd5" fill-opacity=".82"/>'+
+ '<ellipse cx="60" cy="24" rx="26" ry="5" fill="#eaf4fb" fill-opacity=".85"/>'+
+ '<path d="M69 8L75 10L65 72L58 70Z" fill="#d8574a" fill-opacity=".92"/>'+
+ '<circle cx="50" cy="72" r="3" fill="#fff" fill-opacity=".6"/><circle cx="62" cy="84" r="2.5" fill="#fff" fill-opacity=".6"/><circle cx="72" cy="64" r="2" fill="#fff" fill-opacity=".6"/>'+
+ '<path d="M41 34L45 90" stroke="#fff" stroke-opacity=".65" stroke-width="4" fill="none" stroke-linecap="round"/>'+
+ '<path class="i" d="M34 24H86L80 100Q60 108 40 100Z"/><ellipse class="i" cx="60" cy="24" rx="26" ry="5"/>',
+stove:
+ '<rect x="18" y="52" width="84" height="52" rx="7" fill="#9fb0c2" fill-opacity=".92"/>'+
+ '<rect x="14" y="44" width="92" height="12" rx="5" fill="#5f6d7e"/>'+
+ '<ellipse cx="42" cy="42" rx="14" ry="4" fill="#3f4b5a"/><ellipse cx="78" cy="42" rx="14" ry="4" fill="#3f4b5a"/>'+
+ FLAME + '<g transform="translate(36 0)">' + FLAME + '</g>'+
+ '<rect x="28" y="72" width="64" height="26" rx="5" fill="#dbe5ee" fill-opacity=".92"/>'+
+ '<rect x="36" y="77" width="48" height="14" rx="3" fill="#3f4b5a" fill-opacity=".6"/>'+
+ '<path d="M32 69H88" stroke="#5f6d7e" stroke-width="3" fill="none" stroke-linecap="round"/>'+
+ '<circle cx="34" cy="61" r="3.6" fill="#d8574a"/><circle cx="60" cy="61" r="3.6" fill="#d8574a"/><circle cx="86" cy="61" r="3.6" fill="#d8574a"/>'+
+ '<rect class="i" x="18" y="52" width="84" height="52" rx="7"/><rect class="i" x="28" y="72" width="64" height="26" rx="5"/>',
+plate:
+ '<circle cx="60" cy="60" r="46" fill="#cfe3f3" fill-opacity=".92"/>'+
+ '<circle cx="60" cy="60" r="35" fill="#fbf6e8" fill-opacity=".95"/>'+
+ '<circle cx="60" cy="60" r="26" fill="#e7f0f8" fill-opacity=".8"/>'+
+ '<circle cx="60" cy="60" r="40" fill="none" stroke="#5b9bd5" stroke-opacity=".55" stroke-width="3"/>'+
+ '<path d="M26 44Q34 28 52 22" stroke="#fff" stroke-opacity=".7" stroke-width="4" fill="none" stroke-linecap="round"/>'+
+ '<circle class="i" cx="60" cy="60" r="46"/><circle class="i" cx="60" cy="60" r="35"/>',
+bowl:
+ '<path class="steam" d="M44 36Q38 28 44 20Q50 12 44 6M62 38Q56 30 62 22Q68 14 62 8M80 36Q74 28 80 20"/>'+
+ '<path d="M16 52H104Q102 100 60 102Q18 100 16 52Z" fill="#ee9b5a" fill-opacity=".92"/>'+
+ '<path d="M18 64Q60 74 102 64L101 72Q60 82 19 72Z" fill="#fff" fill-opacity=".55"/>'+
+ '<ellipse cx="60" cy="52" rx="44" ry="9" fill="#f6c28f"/>'+
+ '<ellipse cx="60" cy="53" rx="37" ry="6.5" fill="#f0b93b" fill-opacity=".9"/>'+
+ '<path class="i" d="M16 52Q18 100 60 102Q102 100 104 52"/><ellipse class="i" cx="60" cy="52" rx="44" ry="9"/>',
+pot:
+ '<rect x="12" y="62" width="18" height="9" rx="4.5" fill="#3f4b5a"/><rect x="90" y="62" width="18" height="9" rx="4.5" fill="#3f4b5a"/>'+
+ '<rect x="28" y="52" width="64" height="48" rx="9" fill="#d8574a" fill-opacity=".92"/>'+
+ '<rect x="36" y="60" width="6" height="32" rx="3" fill="#fff" fill-opacity=".35"/>'+
+ '<path d="M22 54Q22 34 60 33Q98 34 98 54Z" fill="#c9d3dd"/>'+
+ '<rect x="20" y="50" width="80" height="7" rx="3.5" fill="#aebccb"/>'+
+ '<rect x="55" y="26" width="10" height="9" rx="2" fill="#3f4b5a"/><circle cx="60" cy="25" r="6" fill="#3f4b5a"/>'+
+ '<path class="i" d="M22 54Q22 34 60 33Q98 34 98 54"/><rect class="i" x="28" y="57" width="64" height="43" rx="9"/>'
+};
+
+var HALO = 'M60 8C86 6 112 28 110 58C108 90 84 112 56 110C28 108 8 86 10 56C12 28 34 10 60 8Z';
+var SPK = '<svg class="spk" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>';
+var SPK_OFF = '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M17 9l5 6M22 9l-5 6"/></svg>';
+var SPK_ON = '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>';
+
+function artInner(it){
+  return '<path class="halo" d="'+HALO+'" filter="url(#wc)"/><g filter="url(#wc)">'+ART[it.k]+'</g>';
+}
+function art(it){
+  return '<svg class="art" viewBox="0 0 120 120" aria-hidden="true" focusable="false">'+artInner(it)+'</svg>';
+}
+
+function $(id){ return document.getElementById(id); }
+function shuffle(a){ for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
+
+/* ---------- sound ---------- */
+var synth = ('speechSynthesis' in window) ? window.speechSynthesis : null;
+var soundOn = true, unlocked = false, voice = null;
+
+function pickVoice(){
+  if(!synth) return;
+  var vs = synth.getVoices();
+  voice = null;
+  for(var i=0;i<vs.length;i++){ if(/^en[-_]US/i.test(vs[i].lang) && /samantha|google us|zira|aria|jenny|female/i.test(vs[i].name)){ voice=vs[i]; break; } }
+  if(!voice){ for(var j=0;j<vs.length;j++){ if(/^en[-_]US/i.test(vs[j].lang)){ voice=vs[j]; break; } } }
+  if(!voice){ for(var k=0;k<vs.length;k++){ if(/^en/i.test(vs[k].lang)){ voice=vs[k]; break; } } }
+}
+if(synth){ pickVoice(); try{ synth.addEventListener('voiceschanged', pickVoice); }catch(e){} }
+
+function say(text){
+  if(!synth || !soundOn) return;
+  try{
+    synth.cancel();
+    var u = new SpeechSynthesisUtterance(text);
+    u.lang = 'en-US'; u.rate = 0.8; u.pitch = 1.05;
+    if(voice) u.voice = voice;
+    synth.speak(u);
+  }catch(e){}
+}
+
+var soundBtn = $('sound'), hintEl = $('hint');
+function setSoundUi(){
+  soundBtn.setAttribute('aria-pressed', soundOn ? 'true' : 'false');
+  soundBtn.innerHTML = (soundOn ? SPK_ON : SPK_OFF) + '<span>' + (soundOn ? 'Sound on' : 'Sound off') + '</span>';
+  setHint();
+}
+function setHint(){
+  var t;
+  if(!synth) t = 'This browser cannot speak words. Please open the page in Chrome, Edge or Safari.';
+  else if(!soundOn) t = 'Sound is off. Press "Sound off" at the top to turn it on.';
+  else if(!unlocked) t = 'Click anywhere once to wake up the sound. Then hover over an item in the house.';
+  else t = 'Hover over an item to hear the word and see it grow. On a phone or tablet, tap it.';
+  hintEl.textContent = t;
+}
+soundBtn.addEventListener('click', function(){
+  soundOn = !soundOn;
+  if(!soundOn && synth){ try{ synth.cancel(); }catch(e){} }
+  setSoundUi();
+});
+['pointerdown','keydown'].forEach(function(ev){
+  window.addEventListener(ev, function(){ if(!unlocked){ unlocked = true; setHint(); } }, {once:true, capture:true});
+});
+
+/* ---------- learn: the house ---------- */
+/* cx = centre x, surf = y of the surface the item rests on (or hangs above), s = scale, b = bottom of the drawing inside its 120 box */
+var PLACE = {
+  towel:     {cx:128, surf:311, s:1.0,  b:104},
+  shampoo:   {cx:270, surf:300, s:.72,  b:104},
+  soap:      {cx:395, surf:300, s:.72,  b:98},
+  toothbrush:{cx:270, surf:420, s:.72,  b:92},
+  toothpaste:{cx:395, surf:420, s:.72,  b:90},
+  dipper:    {cx:130, surf:596, s:.95,  b:94,  floor:1},
+  bathtub:   {cx:385, surf:596, s:1.45, b:108, floor:1},
+  knife:     {cx:575, surf:292, s:.7,   b:108},
+  fork:      {cx:665, surf:292, s:.7,   b:108},
+  spoon:     {cx:755, surf:292, s:.7,   b:108},
+  pan:       {cx:860, surf:292, s:.75,  b:90},
+  plate:     {cx:590, surf:420, s:.72,  b:106},
+  bowl:      {cx:720, surf:420, s:.72,  b:102},
+  glass:     {cx:905, surf:494, s:.8,   b:104},
+  pot:       {cx:810, surf:494, s:.8,   b:100},
+  stove:     {cx:625, surf:596, s:1.1,  b:104, floor:1}
+};
+
+function geom(it){
+  var p = PLACE[it.k], s = p.s;
+  var w = Math.max(56, Math.max(it.en.length * 8.4, it.id.length * 6.6) + 20);
+  var ox = p.cx - 60 * s, oy = p.surf - p.b * s;
+  var top = oy + 8 * s, labelTop = p.surf + 10, bottom = labelTop + 34;
+  var half = Math.max(w / 2, 56 * s);
+  return { p:p, s:s, w:w, ox:ox, oy:oy, top:top, labelTop:labelTop, bottom:bottom, half:half, cy:(top + bottom) / 2 };
+}
+
+$('items').innerHTML = ITEMS.map(function(it,i){
+  var g = geom(it), p = g.p;
+  var shadow = p.floor ? '<ellipse cx="'+p.cx+'" cy="'+(p.surf+3)+'" rx="'+(54*g.s)+'" ry="5" fill="#2b3648" fill-opacity=".16"/>' : '';
+  return '<g class="item" id="it-'+it.k+'" data-i="'+i+'" tabindex="0" role="button" aria-label="'+it.en+', '+it.id+'" style="--c:'+it.c+'">'+
+    '<rect class="hit" x="'+(p.cx-g.half)+'" y="'+g.top+'" width="'+(g.half*2)+'" height="'+(g.bottom-g.top)+'" rx="10"/>'+
+    shadow+
+    '<g transform="translate('+g.ox+' '+g.oy+') scale('+g.s+')">'+artInner(it)+'</g>'+
+    '<rect class="lbl-bg" x="'+(p.cx-g.w/2)+'" y="'+g.labelTop+'" width="'+g.w+'" height="34" rx="9"/>'+
+    '<text class="lbl-en" x="'+p.cx+'" y="'+(g.labelTop+14)+'">'+it.en+'</text>'+
+    '<text class="lbl-id" x="'+p.cx+'" y="'+(g.labelTop+28)+'">'+it.id+'</text>'+
+  '</g>';
+}).join('');
+
+var heard = {}, heardN = 0, hoverT = null, clearT = null, tapT = null, active = -1, lastPtr = 'mouse';
+var zoomG = $('zoom');
+
+function showNow(i){
+  var it = ITEMS[i];
+  $('nowEn').textContent = it.en;
+  $('nowId').textContent = it.id;
+  $('nowRoom').textContent = 'in the ' + ROOM[it.room].name.toLowerCase() + ' · ' + ROOM[it.room].id.toLowerCase();
+}
+function clearActive(){
+  if(active < 0) return;
+  var el = $('it-' + ITEMS[active].k);
+  if(el) el.classList.remove('on');
+  zoomG.innerHTML = '';
+  active = -1;
+}
+function setActive(i){
+  clearTimeout(clearT);
+  if(active === i) return;
+  if(active >= 0){ $('it-' + ITEMS[active].k).classList.remove('on'); }
+  active = i;
+  var it = ITEMS[i], g = geom(it);
+  $('it-' + it.k).classList.add('on');
+  var copy = $('it-' + it.k).cloneNode(true);
+  copy.removeAttribute('id'); copy.removeAttribute('tabindex'); copy.removeAttribute('role');
+  copy.style.transformOrigin = g.p.cx + 'px ' + g.cy + 'px';
+  zoomG.innerHTML = '';
+  zoomG.appendChild(copy);
+  showNow(i);
+}
+function hear(i){
+  say(ITEMS[i].say);
+  if(!heard[i]){ heard[i] = true; heardN++; $('heard').textContent = heardN; }
+}
+Array.prototype.forEach.call($('items').querySelectorAll('.item'), function(el){
+  var i = +el.getAttribute('data-i');
+  el.addEventListener('pointerdown', function(e){ lastPtr = e.pointerType || 'mouse'; });
+  el.addEventListener('pointerenter', function(e){
+    if(e.pointerType !== 'mouse' && e.pointerType !== 'pen') return;
+    setActive(i);
+    clearTimeout(hoverT);
+    hoverT = setTimeout(function(){ hear(i); }, 90);
+  });
+  el.addEventListener('pointerleave', function(e){
+    if(e.pointerType !== 'mouse' && e.pointerType !== 'pen') return;
+    clearTimeout(hoverT);
+    clearT = setTimeout(clearActive, 60);
+  });
+  el.addEventListener('click', function(){
+    setActive(i);
+    hear(i);
+    clearTimeout(tapT);
+    if(lastPtr === 'touch'){ tapT = setTimeout(clearActive, 2600); }
+  });
+  el.addEventListener('keydown', function(e){
+    if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); setActive(i); hear(i); }
+  });
+  el.addEventListener('focus', function(){
+    var kb = false;
+    try{ kb = el.matches(':focus-visible'); }catch(err){}
+    if(kb){ setActive(i); hear(i); }
+  });
+  el.addEventListener('blur', function(){ clearActive(); });
+});
+
+/* ---------- tabs ---------- */
+var quizRunning = false;
+function showTab(name){
+  if(quizRunning) return;
+  var learn = name === 'learn';
+  $('learn').hidden = !learn;
+  $('quiz').hidden = learn;
+  $('tab-learn').setAttribute('aria-selected', learn ? 'true' : 'false');
+  $('tab-quiz').setAttribute('aria-selected', learn ? 'false' : 'true');
+  if(synth){ try{ synth.cancel(); }catch(e){} }
+  if(!learn) showPanel('q-start');
+}
+$('tab-learn').addEventListener('click', function(){ showTab('learn'); });
+$('tab-quiz').addEventListener('click', function(){ showTab('quiz'); });
+function lockTabs(on){
+  quizRunning = on;
+  $('tab-learn').setAttribute('aria-disabled', on ? 'true' : 'false');
+  $('tab-quiz').setAttribute('aria-disabled', on ? 'true' : 'false');
+}
+
+function showPanel(id){
+  ['q-start','q-play','q-report'].forEach(function(p){ $(p).hidden = (p !== id); });
+}
+
+/* ---------- students + saved results ---------- */
+var studentSel = $('student');
+studentSel.innerHTML = STUDENTS.map(function(n){ return '<option>'+n+'</option>'; }).join('');
+
+var KEY = 'household-items-results-v1';
+var results = [];
+try{ results = JSON.parse(localStorage.getItem(KEY) || '[]'); if(!Array.isArray(results)) results = []; }catch(e){ results = []; }
+function persist(){ try{ localStorage.setItem(KEY, JSON.stringify(results)); }catch(e){} }
+function bestRows(){
+  var m = {};
+  results.forEach(function(r){
+    var b = m[r.name];
+    if(!b || r.score > b.score || (r.score === b.score && r.acc > b.acc)) m[r.name] = r;
+  });
+  return Object.keys(m).map(function(k){ return m[k]; }).sort(function(a,b){
+    return b.score - a.score || b.acc - a.acc || a.name.localeCompare(b.name);
+  });
+}
+function renderResults(){
+  var rows = bestRows();
+  $('resultsSummary').textContent = 'Class results on this device (' + rows.length + (rows.length === 1 ? ' student)' : ' students)');
+  $('resultsBody').innerHTML = rows.length ? rows.map(function(r){
+    return '<tr><td>'+r.name+'</td><td class="n">'+r.ok+'</td><td class="n">'+r.no+'</td><td class="n">'+r.acc+'%</td><td class="n"><b>'+r.score+'</b></td></tr>';
+  }).join('') : '<tr><td colspan="5">No quiz results yet.</td></tr>';
+}
+renderResults();
+
+$('copyRes').addEventListener('click', function(){
+  var rows = bestRows();
+  var text = ['Student','Correct','Incorrect','Accuracy','Score'].join('\t') + '\n' +
+    rows.map(function(r){ return [r.name, r.ok, r.no, r.acc + '%', r.score].join('\t'); }).join('\n');
+  var box = $('copyBox');
+  function fallback(){ box.hidden = false; box.value = text; box.focus(); box.select(); }
+  try{
+    navigator.clipboard.writeText(text).then(function(){
+      $('copyRes').textContent = 'Copied'; setTimeout(function(){ $('copyRes').textContent = 'Copy results'; }, 1600);
+    }, fallback);
+  }catch(e){ fallback(); }
+});
+var clearArmed = false, clearT = null;
+$('clearRes').addEventListener('click', function(){
+  var b = $('clearRes');
+  if(!clearArmed){
+    clearArmed = true; b.textContent = 'Tap again to clear';
+    clearT = setTimeout(function(){ clearArmed = false; b.textContent = 'Clear results'; }, 4000);
+    return;
+  }
+  clearTimeout(clearT); clearArmed = false; b.textContent = 'Clear results';
+  results = []; persist(); renderResults();
+});
+
+/* ---------- quiz ---------- */
+var Q = null;
+var clockEl = $('clock'), barEl = $('bar'), fillEl = $('barFill');
+
+function fmt(ms){
+  var s = Math.ceil(ms / 1000), m = Math.floor(s / 60), r = s % 60;
+  return m + ':' + (r < 10 ? '0' : '') + r;
+}
+function startQuiz(){
+  Q = { name: studentSel.value, ok:0, no:0, end: Date.now() + QUIZ_SECONDS * 1000, bag:[], last:-1, locked:false, cur:null, n:0, running:true, timer:null };
+  lockTabs(true);
+  $('who').textContent = Q.name;
+  $('nOk').textContent = '0'; $('nNo').textContent = '0';
+  $('opts').classList.remove('locked');
+  $('stop').textContent = 'Stop quiz';
+  showPanel('q-play');
+  nextQ();
+  tick();
+  Q.timer = setInterval(tick, 100);
+}
+function tick(){
+  if(!Q || !Q.running) return;
+  var left = Math.max(0, Q.end - Date.now());
+  clockEl.textContent = fmt(left);
+  clockEl.classList.toggle('low', left <= 15000);
+  barEl.classList.toggle('low', left <= 15000);
+  fillEl.style.transform = 'scaleX(' + (left / (QUIZ_SECONDS * 1000)) + ')';
+  if(left <= 0) finish();
+}
+function draw(){
+  if(!Q.bag.length) Q.bag = shuffle(ITEMS.map(function(_,i){ return i; }));
+  var i = Q.bag.pop();
+  if(i === Q.last && Q.bag.length){ var j = Q.bag.pop(); Q.bag.unshift(i); i = j; }
+  Q.last = i;
+  return i;
+}
+function nextQ(){
+  Q.n++; Q.locked = false;
+  var c = draw();
+  var others = shuffle(ITEMS.map(function(_,i){ return i; }).filter(function(i){ return i !== c; })).slice(0,3);
+  var opts = shuffle([c].concat(others));
+  var r = Math.random();
+  var type = r < 0.4 ? 'pic' : (r < 0.7 ? 'id' : 'hear');
+  Q.cur = { c:c, opts:opts, type:type };
+  var it = ITEMS[c], stage = $('stage'), prompt = $('prompt'), optsEl = $('opts');
+  optsEl.classList.remove('locked');
+  if(type === 'pic'){
+    prompt.textContent = 'What is this?';
+    stage.innerHTML = art(it);
+    optsEl.innerHTML = opts.map(function(i,n){ return '<button type="button" class="opt" data-i="'+i+'" data-key="'+(n+1)+'">'+ITEMS[i].en+'</button>'; }).join('');
+  } else if(type === 'id'){
+    prompt.textContent = 'What is this in English?';
+    stage.innerHTML = '<p class="big">'+it.id+'</p><p class="tag">Bahasa Indonesia</p>';
+    optsEl.innerHTML = opts.map(function(i,n){ return '<button type="button" class="opt" data-i="'+i+'" data-key="'+(n+1)+'">'+ITEMS[i].en+'</button>'; }).join('');
+  } else {
+    prompt.textContent = 'Find the picture of:';
+    stage.innerHTML = '<p class="big">'+it.en+'</p><button type="button" class="replay" id="replay">'+SPK_ON+'<span>Hear it again</span></button>';
+    optsEl.innerHTML = opts.map(function(i,n){ return '<button type="button" class="opt pic" data-i="'+i+'" data-key="'+(n+1)+'" style="--c:'+ITEMS[i].c+'" aria-label="Picture '+(n+1)+'">'+art(ITEMS[i])+'</button>'; }).join('');
+    $('replay').addEventListener('click', function(){ say(it.say); });
+    say(it.say);
+  }
+}
+function answer(btn){
+  if(!Q || !Q.running || Q.locked) return;
+  Q.locked = true;
+  var i = +btn.getAttribute('data-i');
+  var right = (i === Q.cur.c);
+  var optsEl = $('opts');
+  optsEl.classList.add('locked');
+  if(right){
+    Q.ok++; btn.classList.add('right'); $('sr').textContent = 'Correct';
+  } else {
+    Q.no++; btn.classList.add('wrong'); $('sr').textContent = 'Wrong. The answer is ' + ITEMS[Q.cur.c].en;
+    var all = optsEl.querySelectorAll('.opt');
+    for(var k=0;k<all.length;k++){ if(+all[k].getAttribute('data-i') === Q.cur.c) all[k].classList.add('right'); }
+  }
+  $('nOk').textContent = Q.ok; $('nNo').textContent = Q.no;
+  if(Q.cur.type !== 'hear') say(ITEMS[Q.cur.c].say);
+  var n = Q.n;
+  setTimeout(function(){ if(Q && Q.running && Q.n === n) nextQ(); }, right ? 600 : 1100);
+}
+$('opts').addEventListener('click', function(e){
+  var b = e.target.closest ? e.target.closest('.opt') : null;
+  if(b) answer(b);
+});
+document.addEventListener('keydown', function(e){
+  if(!Q || !Q.running || Q.locked) return;
+  if(e.key >= '1' && e.key <= '4'){
+    var b = $('opts').querySelectorAll('.opt')[+e.key - 1];
+    if(b) answer(b);
+  }
+});
+
+var stopArmed = false, stopT = null;
+$('stop').addEventListener('click', function(){
+  var b = $('stop');
+  if(!stopArmed){
+    stopArmed = true; b.textContent = 'Tap again to stop without saving';
+    stopT = setTimeout(function(){ stopArmed = false; b.textContent = 'Stop quiz'; }, 3500);
+    return;
+  }
+  clearTimeout(stopT); stopArmed = false;
+  clearInterval(Q.timer); Q.running = false; lockTabs(false);
+  if(synth){ try{ synth.cancel(); }catch(e){} }
+  showPanel('q-start');
+});
+
+function finish(){
+  if(!Q || !Q.running) return;
+  Q.running = false; clearInterval(Q.timer); lockTabs(false);
+  if(synth){ try{ synth.cancel(); }catch(e){} }
+  var total = Q.ok + Q.no;
+  var acc = total ? Math.round(Q.ok / total * 100) : 0;
+  var score = Math.max(0, Q.ok * PTS_OK - Q.no * PTS_NO);
+  results.push({ name:Q.name, ok:Q.ok, no:Q.no, acc:acc, score:score, ts:Date.now() });
+  persist(); renderResults();
+  $('rName').textContent = Q.name;
+  $('rOk').textContent = Q.ok;
+  $('rNo').textContent = Q.no;
+  $('rAcc').textContent = acc + '%';
+  $('rTot').textContent = total;
+  $('rScore').textContent = score;
+  $('rMsg').textContent = total === 0 ? 'No answers this time. Try again!' :
+    acc >= 90 ? 'Excellent work!' : acc >= 70 ? 'Great job!' : acc >= 50 ? 'Good try. Keep practicing!' : 'Keep practicing. You can do it!';
+  showPanel('q-report');
+  $('again').focus();
+}
+
+$('start').addEventListener('click', startQuiz);
+$('again').addEventListener('click', startQuiz);
+$('next').addEventListener('click', function(){
+  studentSel.selectedIndex = (studentSel.selectedIndex + 1) % STUDENTS.length;
+  showPanel('q-start');
+  $('start').focus();
+});
+$('toLearn').addEventListener('click', function(){ showTab('learn'); });
+
+setSoundUi();
+})();
+</script>
+</body>
+</html>
